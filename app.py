@@ -1,10 +1,15 @@
 from flask import Flask, render_template, request, redirect, url_for
 import os
+import boto3
+import json
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
+# Initialize boto3 Lambda client
+lambda_client = boto3.client('lambda', region_name='eu-north-1')  
 
 @app.route('/')
 def index():
@@ -23,10 +28,30 @@ def csv_to_excel():
         return f"📁 File '{filename}' uploaded for CSV to Excel conversion"
     return "❌ No file selected"
 
+#@app.route('/get_info', methods=['POST'])
+#def get_info():
+#    topic = request.form.get('topic')
+#    return f"📖 Getting Wikipedia info for topic: {topic}"
+
 @app.route('/get_info', methods=['POST'])
 def get_info():
+    print("Raw request data:", request.data)
     topic = request.form.get('topic')
-    return f"📖 Getting Wikipedia info for topic: {topic}"
+    print(f"topic is {topic}") 
+    # Invoke the Lambda function
+    try:
+        response = lambda_client.invoke(
+            FunctionName='hello',
+            InvocationType='RequestResponse',  # Use 'Event' for async
+            Payload=json.dumps({'topic': topic})
+        )
+        print("Lambda Response:", response) 
+        # Read the Lambda response
+        payload = json.loads(response['Payload'].read().decode('utf-8'))
+        return f"📖 Lambda response: {payload}"
+    except Exception as e:
+        return f"❌ Error invoking Lambda: {str(e)}"
+
 
 @app.route('/backup', methods=['POST'])
 def backup():
