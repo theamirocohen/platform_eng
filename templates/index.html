@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Multi-Action App</title>
+</head>
+<body>
+  <h1>Multi-Action Web Interface</h1>
+
+  <form action="/create_user" method="post">
+    <button type="submit">Create User</button>
+  </form>
+  <br>
+
+  <form action="/csv_to_excel" method="post" enctype="multipart/form-data">
+    <button type="submit">CSV to Excel</button>
+    <input type="file" name="csv_file" required>
+  </form>
+  <br>
+
+  <form action="/get_info" method="post">
+    <button type="submit">Get Info</button>
+    <input type="text" name="topic" placeholder="Enter Wikipedia topic" required>
+  </form>
+  <br>
+
+  <form action="/backup" method="post" enctype="multipart/form-data">
+    <button type="submit">Backup</button>
+    <input type="file" name="backup_file" required>
+  </form>
+  <br>
+
+  <form action="/new_project" method="post">
+    <button type="submit">New Project</button>
+    <input type="text" name="project_name" placeholder="Enter project name" required>
+  </form>
+  <br>
+
+  <form action="/send_whatsapp" method="post">
+    <button type="submit">Send WhatsApp</button>
+  </form>
+</body>
+</html>
+
