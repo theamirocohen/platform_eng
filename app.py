@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, send_file
 import os
 import boto3
 import json
@@ -10,6 +10,17 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Initialize boto3 Lambda client
 lambda_client = boto3.client('lambda', region_name='eu-north-1')  
+
+s3 = boto3.client('s3')
+bucket_name = 'platform-eng-hdo4'
+object_key = 'wiki_summaries.txt'
+local_path = '/tmp/wiki_summaries.txt'  # /tmp is writable in Lambda/Flask
+
+@app.route('/download')
+def download_file():
+    # Download from S3
+    s3.download_file(bucket_name, object_key, local_path)
+    return send_file(local_path, as_attachment=True, download_name='wiki_summaries.txt')
 
 @app.route('/')
 def index():
